@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HelloWorld.Views.MainPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Logout" IconImageSource="logout.png" Command="{Binding LogoutCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <StackLayout Padding="10">
+
+        <!-- Use a Grid to place the SearchBar and Picker side by side -->
+        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+            <SearchBar Grid.Column="0"
+                       Placeholder="Search products"
+                       TextChanged="OnSearchBarTextChanged"
+                       VerticalOptions="Center" />
+
+            <Picker Grid.Column="1"
+                    Title="Sort By"
+                    SelectedIndexChanged="OnPickerSelectedIndexChanged"
+                    VerticalOptions="Center">
+                <Picker.Items>
+                    <x:String>Price</x:String>
+                    <x:String>Name</x:String>
+                </Picker.Items>
+            </Picker>
+        </Grid>
+    
+    <Grid>
+        <CollectionView ItemsSource="{Binding Products}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Orientation="Horizontal" Padding="5">
+                            <Image Source="{Binding Thumbnail}" WidthRequest="50" HeightRequest="50" />
+                            <StackLayout Padding="5" VerticalOptions="Center">
+                                <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                <Label Text="{Binding Price, StringFormat='Price: {0:C}'}" />
+                            </StackLayout>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+     </Grid>
+    </StackLayout>
+
+
+</ContentPage>

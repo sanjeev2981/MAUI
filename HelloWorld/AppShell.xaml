@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="HelloWorld.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:HelloWorld.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="HelloWorld">
+
+    <ShellContent
+        Title="Login"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Route="login" />
+    <ShellContent Route="onboarding" ContentTemplate="{DataTemplate views:OnboardingPage}" />
+    <TabBar>
+        <Tab Title="Products">
+            <ShellContent Route="mainpage" ContentTemplate="{DataTemplate views:MainPage}" />
+        </Tab>
+        <Tab Title="Favorite Stocks">
+            <ShellContent Route="customers" ContentTemplate="{DataTemplate views:FavoriteStocksPage}" />
+        </Tab>
+        <Tab Title="StockTicker">
+            <ShellContent Route="stocks" ContentTemplate="{DataTemplate views:StockTickerPage}" />
+        </Tab>
+        <Tab Title="Max Portal">
+            <ShellContent Route="portal" ContentTemplate="{DataTemplate views:WebPage}" />
+        </Tab>
+    </TabBar>
+
+</Shell>

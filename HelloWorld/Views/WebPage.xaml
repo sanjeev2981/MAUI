@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HelloWorld.Views.WebPage"
+             Title="WebPage">
+    <WebView x:Name="webView"
+             Source="https://max-test.novcds.io/landing"
+             VerticalOptions="FillAndExpand"
+             HorizontalOptions="FillAndExpand" />
+</ContentPage>
