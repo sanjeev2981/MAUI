@@ -6,7 +6,7 @@ using Plugin.Maui.Biometric;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HelloWorld.Services;
-using HelloWorld.Views;
+using HelloWorld.Models;
 using Microsoft.Extensions.Logging;
 
 namespace HelloWorld.ViewModels

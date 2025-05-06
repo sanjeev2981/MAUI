@@ -1,5 +1,6 @@
 using HelloWorld.ViewModels;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace HelloWorld.Views;
 
@@ -14,13 +15,15 @@ public partial class FavoriteStocksPage : ContentPage
         BindingContext = viewModel;
         _logger = logger;
         _viewModel = viewModel;
+
+        Debug.WriteLine($"BindingContext type: {BindingContext?.GetType().Name}");
     }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
+        base.OnNavigatedTo(args);
         try
         {
-            base.OnNavigatedTo(args);
             _viewModel.StartStreaming();
         }
         catch (Exception ex)
@@ -31,15 +34,23 @@ public partial class FavoriteStocksPage : ContentPage
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
+        base.OnNavigatedFrom(args);
         try
         {
-            base.OnNavigatedFrom(args);
-            //await _viewModel.PauseStreamingAsync(_favoriteSymbols);
             _viewModel.PauseStreaming();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error navigating from FavoriteStocksPage");
+        }
+    }
+
+    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var selected = e.CurrentSelection.FirstOrDefault() as StockViewModel;
+        if (selected != null)
+        {
+            Debug.WriteLine($"?? SelectionChanged fired: {selected.Symbol}");
         }
     }
 }

@@ -26,7 +26,7 @@ namespace HelloWorld.ViewModels
             _userService = userService;
         }
 
-        private void StartSubscription(IEnumerable<string> symbols)
+        private void CreateStockModelCollection(IEnumerable<string> symbols)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace HelloWorld.ViewModels
                     {
                         foreach (var symbol in symbols)
                         {
-                            Stocks.Add(new StockViewModel(symbol));
+                            Stocks.Add(new StockViewModel(symbol, NavigateToChart));
                         }
                     }
                 }
@@ -64,21 +64,25 @@ namespace HelloWorld.ViewModels
 
                     if (userStocks != null)
                     {
-                        //Start subscription to symbols
-                        StartSubscription(userStocks);
-
-                        // Start the stock ticker service stream
-                        //_stockTickerService.StartStreaming(userStocks);
+                        //Create models for stocks that are shown on the page
+                        CreateStockModelCollection(userStocks);
 
                         //Dispose existing subscription if any
                         _subscription?.Dispose();
 
-                        // Subscribe to stock updates
-                        _subscription = _stockTickerService.StockUpdates?.Subscribe(update =>
+                        // Start streaming service if not already started
+                        if (!_stockTickerService.isConnected)
+                            _stockTickerService.StartStreaming(userStocks);
+
+                        // Subscribe to stock updates and update only the ones we show on the page
+                        if (_stockTickerService.isConnected)
                         {
-                            var stock = Stocks.FirstOrDefault(s => s.Symbol == update.S);
-                            stock?.Update(update.P, update.T);
-                        });
+                            _subscription = _stockTickerService.StockUpdates?.Subscribe(update =>
+                            {
+                                var stock = Stocks.FirstOrDefault(s => s.Symbol == update.S);
+                                stock?.Update(update.P, update.T);
+                            });
+                        }
                     }
                 }
             }
@@ -88,24 +92,10 @@ namespace HelloWorld.ViewModels
             }
         }
 
-        public async Task PauseStreamingAsync(IEnumerable<string> symbols)
+        private void NavigateToChart(string symbol)
         {
-            try
-            {
-                _subscription?.Dispose();
-                _subscription = null;
-
-                if (symbols != null && _stockTickerService != null)
-                {
-                    await _stockTickerService.PauseAsync(symbols);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error pausing stream");
-            }
+            Shell.Current.GoToAsync($"//chartpage?symbol={symbol}");
         }
-
         public void PauseStreaming()
         {
             try

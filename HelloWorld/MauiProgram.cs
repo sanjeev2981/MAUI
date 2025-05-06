@@ -4,6 +4,7 @@ using HelloWorld.ViewModels;
 using HelloWorld.Services;
 using HelloWorld.Views;
 using Microsoft.Extensions.Logging.Console;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace HelloWorld
 {
@@ -14,6 +15,7 @@ namespace HelloWorld
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseSkiaSharp() // ← REQUIRED for SKCanvasView to work
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -33,12 +35,14 @@ namespace HelloWorld
             builder.Services.AddSingleton<ProductService>();
             builder.Services.AddSingleton<UserService>();
             builder.Services.AddSingleton<StockTickerService>();
+            builder.Services.AddSingleton<SingleStockService>();
 
             // Register ViewModels
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<MainViewModel>();
             builder.Services.AddTransient<StockTickerViewModel>();
             builder.Services.AddTransient<FavoriteStocksViewModel>();
+            builder.Services.AddTransient<StockChartViewModel>();
 
             // Register Views
             builder.Services.AddTransient<MainPage>();
@@ -46,6 +50,7 @@ namespace HelloWorld
             builder.Services.AddTransient<WebPage>();
             builder.Services.AddTransient<StockTickerPage>();
             builder.Services.AddTransient<FavoriteStocksPage>();
+            builder.Services.AddTransient<StockChartPage>();
 
             return builder.Build();
         }

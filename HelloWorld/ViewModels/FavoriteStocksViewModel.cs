@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using HelloWorld.Services;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -13,6 +14,9 @@ namespace HelloWorld.ViewModels
         private IDisposable? _subscription;
 
         public ObservableCollection<StockViewModel> Stocks { get; } = new();
+
+        [ObservableProperty]
+        private StockViewModel? selectedStock;
 
         public FavoriteStocksViewModel(StockTickerService stockTickerService, ILogger<StockTickerViewModel> logger, UserService userService)
         {
@@ -31,7 +35,7 @@ namespace HelloWorld.ViewModels
                     {
                         foreach (var symbol in symbols)
                         {
-                            Stocks.Add(new StockViewModel(symbol));
+                            Stocks.Add(new StockViewModel(symbol,NavigateToChart));
                         }
                     }
                 }
@@ -62,9 +66,6 @@ namespace HelloWorld.ViewModels
                         // Start subscription to symbols  
                         StartSubscription(favoriteStocks);
 
-                        // Start the stock ticker service stream  
-                        //_stockTickerService.StartStreaming(favoriteStocks);
-
                         // Dispose existing subscription if any  
                         _subscription?.Dispose();
 
@@ -83,24 +84,6 @@ namespace HelloWorld.ViewModels
             }
         }
 
-        public async Task PauseStreamingAsync(IEnumerable<string> symbols)
-        {
-            try
-            {
-                _subscription?.Dispose();
-                _subscription = null;
-
-                if (symbols != null && _stockTickerService != null)
-                {
-                    await _stockTickerService.PauseAsync(symbols);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error pausing stream");
-            }
-        }
-
         public void PauseStreaming()
         {
             try
@@ -113,5 +96,24 @@ namespace HelloWorld.ViewModels
                 _logger.LogError(ex, $"Error pausing stream");
             }
         }
+
+        [RelayCommand]
+        //private async Task NavigateToChart(string symbol)
+        //{
+        //    await Shell.Current.GoToAsync($"//chartpage?symbol={symbol}");
+        //}
+
+        private void NavigateToChart(string symbol)
+        {
+            Shell.Current.GoToAsync($"chartpage?symbol={Uri.EscapeDataString(symbol)}");
+        }
+        //partial void OnSelectedStockChanged(StockViewModel? value)
+        //{
+        //    if (value is not null)
+        //    {
+        //        NavigateToChartCommand.Execute(value.Symbol);
+        //        SelectedStock = null;
+        //    }
+        //} 
     }
 }

@@ -15,7 +15,6 @@ namespace HelloWorld.Services
 {
     public class StockTickerService : IAsyncDisposable
     {
-        
         private readonly ILogger<StockTickerService> _logger;
 
         private ClientWebSocket? _webSocket;
@@ -24,7 +23,7 @@ namespace HelloWorld.Services
 
         public IObservable<StockPriceUpdate>? StockUpdates => _stockUpdates;
 
-        private const string FinnhubToken = "cvvsqrpr01qod00lvoagcvvsqrpr01qod00lvob0";
+        private const string FinnhubToken = "d0afk3pr01qm3l9l4hbgd0afk3pr01qm3l9l4hc0";
         private const string BaseUrl = "wss://ws.finnhub.io?token=" + FinnhubToken;
 
         private bool _isSubscribed = false;
@@ -83,19 +82,26 @@ namespace HelloWorld.Services
                 _logger.LogError($"Error unsubscribing from symbols: {ex.Message}");
             }
         }
-        public void StartStreaming(IEnumerable<string> symbols)
+        public async void StartStreaming(IEnumerable<string> symbols)
         {
             try
-            {
-                //await SubscribeToSymbols(symbols);
-                _ = ReceiveLoop();
+            {   
+                if(!isConnected)
+                {
+                    await SubscribeAsync(symbols);
+                }
+                else
+                {
+                    _logger.LogInformation($"Already connected to WebSocket. No need to reconnect.");
+                }
+                _ = ReceiveLoop(symbols);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error starting StockTickerService: {ex.Message}");
             }
         }
-        private async Task ReceiveLoop()
+        private async Task ReceiveLoop(IEnumerable<string> symbols)
         {
             var buffer = new byte[4096];
 
@@ -104,6 +110,7 @@ namespace HelloWorld.Services
                 if(_webSocket == null || _cancellationTokenSource == null)
                     return;
 
+                _logger.LogInformation($"Starting Stream for symbols: {string.Join(", ", symbols)}");
                 while (_webSocket.State == WebSocketState.Open)
                 {
                     var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), _cancellationTokenSource.Token);
@@ -131,8 +138,9 @@ namespace HelloWorld.Services
                             T = item.T,
                             V = item.V
                         });
+                    }
                 }
-                }
+                _logger.LogInformation($"Stopping Stream for symbols: {string.Join(", ", symbols)}");
             }
             catch (OperationCanceledException)
             {
