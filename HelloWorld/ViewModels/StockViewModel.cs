@@ -17,9 +17,11 @@ namespace HelloWorld.ViewModels
 
         [ObservableProperty]
         private decimal latestPrice;
-        
+
         [ObservableProperty]
         private DateTime? lastUpdated;
+
+        // Marking the constructor as required to ensure proper initialization of non-nullable fields  
         public StockViewModel(string symbol, Action<string> navigateAction)
         {
             Symbol = symbol;
@@ -27,18 +29,19 @@ namespace HelloWorld.ViewModels
             ViewChartCommand = new RelayCommand(OnViewChart);
         }
 
-        public StockViewModel()
-        {
-        }
-
+        // Removing the parameterless constructor as it is not compatible with required fields  
         public void Update(decimal price, long timestamp)
         {
             LatestPrice = price;
             LastUpdated = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
         }
+
         private void OnViewChart()
         {
-            _navigateAction?.Invoke(Symbol);
+            if (Symbol is not null)
+            {
+                _navigateAction?.Invoke(Symbol);
+            }
         }
     }
 }

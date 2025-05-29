@@ -9,7 +9,7 @@ namespace HelloWorld.Services
     //Manages connection & realtime + historical data for a single stock
     public class SingleStockService : StockServiceBase
     {
-        private readonly ILogger<SingleStockService> _logger;
+        private new readonly ILogger<SingleStockService> _logger;
 
         public SingleStockService(ILogger<SingleStockService> logger) : base(logger)
         {
@@ -41,6 +41,6 @@ namespace HelloWorld.Services
             }
         }
 
-        public async ValueTask DisposeAsync() => await base.DisposeAsync();
+        public override async ValueTask DisposeAsync() => await base.DisposeAsync();
     }
 }

@@ -9,7 +9,7 @@ namespace HelloWorld.Services
 {
     public class StockTickerService : StockServiceBase
     {
-        private readonly ILogger<StockTickerService> _logger;
+        private new readonly ILogger<StockTickerService> _logger;
 
         public StockTickerService(ILogger<StockTickerService> logger) : base(logger)
         {
@@ -49,6 +49,6 @@ namespace HelloWorld.Services
             await DisposeAsync();
         }
 
-        public async ValueTask DisposeAsync() => await base.DisposeAsync();
+        public override async ValueTask DisposeAsync() => await base.DisposeAsync();
     }
 }

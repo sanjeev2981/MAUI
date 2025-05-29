@@ -208,7 +208,7 @@ namespace HelloWorld.ViewModels
                 if (symbols != null && stockTickerService != null)
                 {
                     //Start subscription to symbols
-                    await stockTickerService.SubscribeAsync(symbols);
+                    //await stockTickerService.SubscribeAsync(symbols);
                     // Start the stock ticker service stream
                     stockTickerService.StartStreaming(symbols);
                 }
